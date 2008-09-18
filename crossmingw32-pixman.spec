@@ -1,12 +1,12 @@
 Summary:	Pixel manipulation library - cross Mingw32
 Summary(pl.UTF-8):	Biblioteka operacji na pikselach - wersja skrośna Mingw32
 Name:		crossmingw32-pixman
-Version:	0.11.10
+Version:	0.12.0
 Release:	1
 License:	MIT
 Group:		Development/Libraries
 Source0:	http://xorg.freedesktop.org/archive/individual/lib/pixman-%{version}.tar.bz2
-# Source0-md5:	5db471bffc5caeebb6a07be674d65373
+# Source0-md5:	494af78c1c7d825c9ad6815d7b91f17d
 URL:		http://xorg.freedesktop.org/
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake
