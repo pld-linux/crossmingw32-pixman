@@ -1,17 +1,17 @@
 Summary:	Pixel manipulation library - cross Mingw32
 Summary(pl.UTF-8):	Biblioteka operacji na pikselach - wersja skrośna Mingw32
 Name:		crossmingw32-pixman
-Version:	0.12.0
+Version:	0.16.6
 Release:	1
 License:	MIT
 Group:		Development/Libraries
 Source0:	http://xorg.freedesktop.org/archive/individual/lib/pixman-%{version}.tar.bz2
-# Source0-md5:	494af78c1c7d825c9ad6815d7b91f17d
+# Source0-md5:	fbd6ee9cb09d0b26281557bc7afcb3ab
+Patch0:		pixman-no_pkgconfig.patch
 URL:		http://xorg.freedesktop.org/
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake
 BuildRequires:	crossmingw32-gcc
-BuildRequires:	crossmingw32-zlib
 BuildRequires:	libtool
 BuildRequires:	sed >= 4.0
 Requires:	crossmingw32-runtime
@@ -73,6 +73,7 @@ Biblioteka DLL pixman dla Windows.
 
 %prep
 %setup -q -n pixman-%{version}
+%patch0 -p1
 
 # disable gtk-based test
 :> test/Makefile.am
@@ -96,6 +97,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+sed -i -e 's#<pixman-version.h>#<pixman-1/pixman-version.h>#g' $RPM_BUILD_ROOT%{_includedir}/pixman-1/pixman.h
 
 install -d $RPM_BUILD_ROOT%{_dlldir}
 mv -f $RPM_BUILD_ROOT%{_prefix}/bin/*.dll $RPM_BUILD_ROOT%{_dlldir}

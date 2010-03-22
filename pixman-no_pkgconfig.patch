@@ -1,0 +1,17 @@
+--- pixman-0.12.0/configure.ac.orig	2008-11-27 00:33:27.424372137 +0100
++++ pixman-0.12.0/configure.ac	2008-11-27 00:33:46.923032039 +0100
+@@ -282,14 +282,6 @@
+                    [enable tests using GTK+ [default=auto]])],
+    [enable_gtk=$enableval], [enable_gtk=auto])
+ 
+-PKG_PROG_PKG_CONFIG
+-if test $enable_gtk = auto ; then
+-   PKG_CHECK_EXISTS([gtk+-2.0], [enable_gtk=yes], [enable_gtk=no])
+-fi
+-if test $enable_gtk = yes ; then
+-   PKG_CHECK_MODULES(GTK, [gtk+-2.0])
+-fi
+-
+ AM_CONDITIONAL(HAVE_GTK, [test "x$enable_gtk" = xyes])
+ 
+ AC_SUBST(GTK_CFLAGS)
