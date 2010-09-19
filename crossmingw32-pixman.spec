@@ -1,5 +1,5 @@
-Summary:	Pixel manipulation library - cross Mingw32
-Summary(pl.UTF-8):	Biblioteka operacji na pikselach - wersja skrośna Mingw32
+Summary:	Pixel manipulation library - cross MinGW32
+Summary(pl.UTF-8):	Biblioteka operacji na pikselach - wersja skrośna MinGW32
 Name:		crossmingw32-pixman
 Version:	0.18.4
 Release:	1
@@ -49,16 +49,16 @@ pixman to biblioteka do operacji na pikselach.
 Ten pakiet zawiera wersję skrośną dla Win32.
 
 %package static
-Summary:	Static pixman library (cross mingw32 version)
-Summary(pl.UTF-8):	Statyczna biblioteka pixman (wersja skrośna mingw32)
+Summary:	Static pixman library (cross MinGW32 version)
+Summary(pl.UTF-8):	Statyczna biblioteka pixman (wersja skrośna MinGW32)
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description static
-Static pixman library (cross mingw32 version).
+Static pixman library (cross MinGW32 version).
 
 %description static -l pl.UTF-8
-Statyczna biblioteka pixman (wersja skrośna mingw32).
+Statyczna biblioteka pixman (wersja skrośna MinGW32).
 
 %package dll
 Summary:	DLL pixman library for Windows
