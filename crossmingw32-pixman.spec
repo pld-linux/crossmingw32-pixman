@@ -1,19 +1,18 @@
 Summary:	Pixel manipulation library - cross MinGW32
 Summary(pl.UTF-8):	Biblioteka operacji na pikselach - wersja skrośna MinGW32
 Name:		crossmingw32-pixman
-Version:	0.18.4
+Version:	0.20.0
 Release:	1
 License:	MIT
 Group:		Development/Libraries
 Source0:	http://xorg.freedesktop.org/archive/individual/lib/pixman-%{version}.tar.bz2
-# Source0-md5:	c1d69aaddba8c1e046d26ac125da95bf
-Patch0:		pixman-no_pkgconfig.patch
-Patch1:		pixman-notls.patch
+# Source0-md5:	512ec766a911142b901157ba581f6e75
 URL:		http://xorg.freedesktop.org/
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake
 BuildRequires:	crossmingw32-gcc
 BuildRequires:	libtool
+BuildRequires:	pkgconfig
 BuildRequires:	sed >= 4.0
 Requires:	crossmingw32-runtime
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -74,13 +73,6 @@ Biblioteka DLL pixman dla Windows.
 
 %prep
 %setup -q -n pixman-%{version}
-%patch0 -p1
-%patch1 -p1
-
-# disable gtk-based test
-:> test/Makefile.am
-# needed to build dll
-sed -i -e 's/^libpixman_1_la_LDFLAGS =/& -no-undefined/' pixman/Makefile.am
 
 %build
 %{__libtoolize}
@@ -89,9 +81,9 @@ sed -i -e 's/^libpixman_1_la_LDFLAGS =/& -no-undefined/' pixman/Makefile.am
 %{__autoheader}
 %{__automake}
 %configure \
-	CPPFLAGS="%{rpmcppflags} -DPIXMAN_NO_TLS" \
 	--target=%{target} \
 	--host=%{target} \
+	--disable-gtk \
 	--disable-silent-rules
 
 %{__make}
@@ -117,7 +109,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README TODO
+%doc COPYING README TODO
 %{_libdir}/libpixman-1.dll.a
 %{_libdir}/libpixman-1.la
 %{_includedir}/pixman-1
