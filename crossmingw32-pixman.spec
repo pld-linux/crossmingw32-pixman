@@ -1,12 +1,12 @@
 Summary:	Pixel manipulation library - cross MinGW32
 Summary(pl.UTF-8):	Biblioteka operacji na pikselach - wersja skrośna MinGW32
 Name:		crossmingw32-pixman
-Version:	0.26.0
+Version:	0.26.2
 Release:	1
 License:	MIT
 Group:		Development/Libraries
 Source0:	http://xorg.freedesktop.org/archive/individual/lib/pixman-%{version}.tar.bz2
-# Source0-md5:	d0c41a51db89efec669812e66a5582fa
+# Source0-md5:	6b3e4c5300adb893a2baa9631c23efb2
 URL:		http://xorg.freedesktop.org/
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake
