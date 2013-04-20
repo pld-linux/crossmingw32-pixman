@@ -76,6 +76,8 @@ Biblioteka DLL pixman dla Windows.
 %prep
 %setup -q -n pixman-%{version}
 
+%{__sed} -i -e 's/AM_CONFIG_HEADER/AC_CONFIG_HEADERS/' configure.ac
+
 %build
 %{__libtoolize}
 %{__aclocal}
