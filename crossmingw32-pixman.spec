@@ -1,14 +1,14 @@
 Summary:	Pixel manipulation library - cross MinGW32
 Summary(pl.UTF-8):	Biblioteka operacji na pikselach - wersja skrośna MinGW32
 Name:		crossmingw32-pixman
-Version:	0.34.0
+Version:	0.36.0
 Release:	1
 License:	MIT
 Group:		Development/Libraries
-Source0:	http://xorg.freedesktop.org/archive/individual/lib/pixman-%{version}.tar.bz2
-# Source0-md5:	002a4fcb644ddfcb4b0e4191576a0d59
+Source0:	https://www.caurographics.org/releases/pixman-%{version}.tar.gz
+# Source0-md5:	552df0d7ccccfadd07ae3758cc9a057f
 URL:		http://pixman.org/
-BuildRequires:	autoconf >= 2.57
+BuildRequires:	autoconf >= 2.62
 BuildRequires:	automake
 BuildRequires:	crossmingw32-gcc
 BuildRequires:	libtool
@@ -77,6 +77,8 @@ Biblioteka DLL pixman dla Windows.
 %prep
 %setup -q -n pixman-%{version}
 
+%{__sed} -i -e 's#<pixman-version.h>#"pixman-version.h"#' pixman/pixman.h
+
 %build
 %{__libtoolize}
 %{__aclocal}
@@ -97,10 +99,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-sed -i -e 's#<pixman-version.h>#<pixman-1/pixman-version.h>#g' $RPM_BUILD_ROOT%{_includedir}/pixman-1/pixman.h
-
 install -d $RPM_BUILD_ROOT%{_dlldir}
-mv -f $RPM_BUILD_ROOT%{_prefix}/bin/*.dll $RPM_BUILD_ROOT%{_dlldir}
+%{__mv} $RPM_BUILD_ROOT%{_prefix}/bin/*.dll $RPM_BUILD_ROOT%{_dlldir}
 
 %if 0%{!?debug:1}
 %{target}-strip --strip-unneeded -R.comment -R.note $RPM_BUILD_ROOT%{_dlldir}/*.dll
