@@ -1,18 +1,18 @@
 Summary:	Pixel manipulation library - cross MinGW32
 Summary(pl.UTF-8):	Biblioteka operacji na pikselach - wersja skrośna MinGW32
 Name:		crossmingw32-pixman
-Version:	0.42.2
+Version:	0.44.0
 Release:	1
 License:	MIT
 Group:		Development/Libraries
 Source0:	https://www.cairographics.org/releases/pixman-%{version}.tar.gz
-# Source0-md5:	a0f6ab8a1d8e0e2cd80e935525e2a864
-URL:		http://pixman.org/
-BuildRequires:	autoconf >= 2.62
-BuildRequires:	automake
+# Source0-md5:	3f5dd5dbff50d7ec678b59f58c9c452d
+URL:		https://pixman.org/
 BuildRequires:	crossmingw32-gcc
-BuildRequires:	libtool
+BuildRequires:	meson >= 0.52.0
+BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
+BuildRequires:	rpmbuild(macros) >= 1.736
 BuildRequires:	sed >= 4.0
 Requires:	crossmingw32-runtime
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -28,10 +28,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_libdir			%{_prefix}/lib
 %define		_pkgconfigdir		%{_prefix}/lib/pkgconfig
 %define		_dlldir			/usr/share/wine/windows/system
-%define		__cc			%{target}-gcc
-%define		__cxx			%{target}-g++
 %define		__pkgconfig_provides	%{nil}
 %define		__pkgconfig_requires	%{nil}
+# for meson 0.50+, keep __cc/__cxx as host compiler and pass %{target}-* in meson-cross.txt
 
 %ifnarch %{ix86}
 # arch-specific flags (like alpha's -mieee) are not valid for i386 gcc
@@ -80,26 +79,35 @@ Biblioteka DLL pixman dla Windows.
 
 %{__sed} -i -e 's#<pixman-version.h>#"pixman-version.h"#' pixman/pixman.h
 
-%build
-%{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__autoheader}
-%{__automake}
-%configure \
-	--target=%{target} \
-	--host=%{target} \
-	--disable-gtk \
-	--disable-openmp \
-	--disable-silent-rules
+cat > meson-cross.txt <<'EOF'
+[host_machine]
+system = 'windows'
+cpu_family = 'x86'
+cpu = 'i386'
+endian='little'
+[binaries]
+c = '%{target}-gcc'
+cpp = '%{target}-g++'
+ar = '%{target}-ar'
+windres = '%{target}-windres'
+pkgconfig = 'pkg-config'
+[properties]
+c_args = ['%(echo %{rpmcflags} | sed -e "s/ \+/ /g;s/ /', '/g")', '-DWINVER=0x0600']
+EOF
 
-%{__make}
+%build
+export PKG_CONFIG_LIBDIR=%{_pkgconfigdir}
+%meson build \
+	--cross-file meson-cross.txt \
+	-Dgtk=disabled \
+	-Dopenmp=disabled
+
+%ninja_build -C build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
+%ninja_install -C build
 
 install -d $RPM_BUILD_ROOT%{_dlldir}
 %{__mv} $RPM_BUILD_ROOT%{_prefix}/bin/*.dll $RPM_BUILD_ROOT%{_dlldir}
@@ -116,7 +124,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc COPYING README
 %{_libdir}/libpixman-1.dll.a
-%{_libdir}/libpixman-1.la
 %{_includedir}/pixman-1
 %{_pkgconfigdir}/pixman-1.pc
 
