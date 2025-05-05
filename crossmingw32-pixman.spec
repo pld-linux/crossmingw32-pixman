@@ -1,18 +1,18 @@
 Summary:	Pixel manipulation library - cross MinGW32
 Summary(pl.UTF-8):	Biblioteka operacji na pikselach - wersja skrośna MinGW32
 Name:		crossmingw32-pixman
-Version:	0.44.2
+Version:	0.46.0
 Release:	1
 License:	MIT
 Group:		Development/Libraries
 Source0:	https://www.cairographics.org/releases/pixman-%{version}.tar.gz
-# Source0-md5:	0825cd6bfc488d5177f2f013a06ef240
+# Source0-md5:	16fd88571a1cda22176bc82d653c6e85
 URL:		https://pixman.org/
-BuildRequires:	crossmingw32-gcc
+BuildRequires:	crossmingw32-gcc >= 1:4.2
 BuildRequires:	meson >= 1.3.0
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
-BuildRequires:	rpmbuild(macros) >= 1.736
+BuildRequires:	rpmbuild(macros) >= 2.042
 BuildRequires:	sed >= 4.0
 Requires:	crossmingw32-runtime
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -27,6 +27,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_prefix			%{_sysprefix}/%{target}
 %define		_libdir			%{_prefix}/lib
 %define		_pkgconfigdir		%{_prefix}/lib/pkgconfig
+%define		_docdir			%{_sysprefix}/share/doc
 %define		_dlldir			/usr/share/wine/windows/system
 %define		__pkgconfig_provides	%{nil}
 %define		__pkgconfig_requires	%{nil}
@@ -90,24 +91,38 @@ c = '%{target}-gcc'
 cpp = '%{target}-g++'
 ar = '%{target}-ar'
 windres = '%{target}-windres'
-pkgconfig = 'pkg-config'
-[properties]
+pkg-config = 'pkg-config'
+[build-in options]
 c_args = ['%(echo %{rpmcflags} | sed -e "s/ \+/ /g;s/ /', '/g")', '-DWINVER=0x0600']
 EOF
 
 %build
 export PKG_CONFIG_LIBDIR=%{_pkgconfigdir}
-%meson build \
+%meson \
 	--cross-file meson-cross.txt \
+	-Da64-neon=disabled \
+	-Darm-simd=disabled \
+	-Ddemos=disabled \
+	-Dgnu-inline-asm=enabled \
 	-Dgtk=disabled \
-	-Dopenmp=disabled
+	-Dlibpng=disabled \
+	-Dloongson-mmi=disabled \
+	-Dmips-dspr2=disabled \
+	-Dneon=disabled \
+	-Dopenmp=disabled \
+	-Drvv=disabled \
+	-Dsse2=enabled \
+	-Dssse3=enabled \
+	-Dtests=disabled \
+	-Dtls=enabled \
+	-Dvmx=disabled
 
-%ninja_build -C build
+%meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%ninja_install -C build
+%meson_install
 
 install -d $RPM_BUILD_ROOT%{_dlldir}
 %{__mv} $RPM_BUILD_ROOT%{_prefix}/bin/*.dll $RPM_BUILD_ROOT%{_dlldir}
